@@ -1,6 +1,7 @@
 package br.com.samuca.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,15 @@ public class PersonServices {
 		return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
 	}
 	
-	public Person create(Person person){
+	public Person create(Person person) {
+
 		logger.info("Creating one person!");
+		
+		Optional<Person> savedPerson = repository.findByEmail(person.getEmail());
+		if(savedPerson.isPresent()) {
+		    throw new ResourceNotFoundException(
+	            "Person already exist with given e-Mail: " + person.getEmail());
+		}
 		return repository.save(person);
 	}
 	
